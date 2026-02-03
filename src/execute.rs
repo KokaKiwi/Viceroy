@@ -320,7 +320,7 @@ impl ExecuteCtx {
         unknown_import_behavior: UnknownImportBehavior,
         adapt_components: bool,
     ) -> Result<Arc<Self>, Error> {
-        ExecuteCtx::build(
+        let ctx = ExecuteCtx::build(
             module_path,
             profiling_strategy,
             wasi_modules,
@@ -328,7 +328,39 @@ impl ExecuteCtx {
             unknown_import_behavior,
             adapt_components,
         )?
-        .finish()
+        .finish();
+
+        Ok(Arc::new(ctx))
+    }
+
+    /// Create a new builder for an execution context based on this one.
+    pub fn new_instance(&self) -> ExecuteCtxBuilder {
+        ExecuteCtxBuilder {
+            inner: Self {
+                engine: self.engine.clone(),
+                instance_pre: self.instance_pre.clone(),
+                tls_config: self.tls_config.clone(),
+                capture_logs: self.capture_logs.clone(),
+                log_stdout: self.log_stdout,
+                log_stderr: self.log_stderr,
+                config_path: self.config_path.clone(),
+                epoch_increment_thread: None,
+                epoch_increment_stop: self.epoch_increment_stop.clone(),
+                guest_profile_config: self.guest_profile_config.clone(),
+                cache: self.cache.clone(),
+                acls: Acls::new(),
+                backends: Backends::default(),
+                device_detection: DeviceDetection::default(),
+                geolocation: Geolocation::default(),
+                dictionaries: Dictionaries::default(),
+                local_pushpin_proxy_port: None,
+                next_req_id: Arc::new(AtomicU64::new(0)),
+                object_store: ObjectStores::new(),
+                secret_stores: SecretStores::new(),
+                shielding_sites: ShieldingSites::new(),
+                pending_reuse: Arc::new(AsyncMutex::new(vec![])),
+            },
+        }
     }
 
     /// Get the engine for this execution context.
@@ -893,8 +925,8 @@ pub struct ExecuteCtxBuilder {
 }
 
 impl ExecuteCtxBuilder {
-    pub fn finish(self) -> Result<Arc<ExecuteCtx>, Error> {
-        Ok(Arc::new(self.inner))
+    pub fn finish(self) -> ExecuteCtx {
+        self.inner
     }
 
     /// Set the acls for this execution context.

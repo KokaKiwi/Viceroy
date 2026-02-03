@@ -42,6 +42,10 @@ mod upstream;
 pub mod wiggle_abi;
 
 pub use {
-    error::Error, execute::ExecuteCtx, execute::GuestProfileConfig, service::ViceroyService,
-    upstream::BackendConnector, wasmtime::ProfilingStrategy,
+    error::Error,
+    execute::GuestProfileConfig,
+    execute::{ExecuteCtx, ExecuteCtxBuilder},
+    service::ViceroyService,
+    upstream::BackendConnector,
+    wasmtime::ProfilingStrategy,
 };

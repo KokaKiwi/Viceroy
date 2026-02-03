@@ -49,11 +49,11 @@ pub use self::geolocation::Geolocation;
 /// Types and deserializers for object store configuration settings.
 mod object_store;
 
-pub use crate::object_store::ObjectStores;
+pub use crate::object_store::{KvStoreError, ObjectKey, ObjectStoreKey, ObjectStores, ObjectValue};
 
 /// Types and deserializers for secret store configuration settings.
 mod secret_store;
-pub use crate::secret_store::{SecretStore, SecretStores};
+pub use crate::secret_store::{Secret, SecretStore, SecretStores};
 
 pub use crate::shielding_site::ShieldingSites;
 
